@@ -1,0 +1,13 @@
+package captcha
+
+import (
+	"github.com/dchest/captcha"
+	. "admin-mvc/app/utils"
+	"admin-mvc/app/models"	
+	"encoding/json"
+	"fmt"
+	//"html/template"
+	"net/http"
+	"github.com/julienschmidt/httprouter"
+	"text/template"
+)
