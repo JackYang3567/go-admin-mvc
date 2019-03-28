@@ -4,5 +4,8 @@
   "WriteTimeout"   : 600,
   "Static"         : "public",
   "DbDriverName"   : "postgres",
-  "DataSourceName" : "dbname=chitchat sslmode=disable" 
+  "DataSourceName" : "host=127.0.0.1 port=5432 user=root dbname=chitchat password=root sslmode=disable" ,
+  "RedisProtocol"  : "tcp", 
+  "RedisHostPort"  : "127.0.0.1:6379"
+  
 }

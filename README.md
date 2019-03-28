@@ -19,4 +19,12 @@ $go install net
 ```
 天朝可以去 http://www.golangtc.com/download/package 或 https://gopm.io 下载
 
+# 插件
+```
+go get github.com/gomodule/redigo/redis
+go get github.com/streadway/amqp
+https://blog.csdn.net/qq_28018283/article/details/84952123
+
+```
+
 

@@ -2,6 +2,7 @@ package common
 
 import (
 	. "admin-mvc/app/utils"
+	. "admin-mvc/app/utils/chain"
 	"admin-mvc/app/models"	
 	"encoding/json"
 	//"html/template"

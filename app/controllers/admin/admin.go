@@ -1,12 +1,14 @@
 package admin
 
 import (
+	"github.com/julienschmidt/httprouter"
+	_"github.com/gomodule/redigo/redis"
 	. "admin-mvc/app/utils"
+	. "admin-mvc/app/utils/dbconn"
 	 "admin-mvc/app/models"	
 	_ "encoding/json"
 	//"html/template"
-	"net/http"
-	"github.com/julienschmidt/httprouter"
+	"net/http"	
 	"time"
 	"strings"
 )
@@ -19,6 +21,24 @@ func Index(w http.ResponseWriter, r *http.Request ,_ httprouter.Params) {
 }
 
 func Dashboard(w http.ResponseWriter, r *http.Request ,_ httprouter.Params) {
+	rc := RedisClient.Get()
+	defer  rc.Close()
+
+	Count := "count:dash" 
+	
+	rc.Send("INCR",Count)
+	/*
+	rc.Send("SADD",photoSet,uid)
+	rc.Send("SADD",userLikeSet,photoId)
+
+	rc.Flush()
+	v,err := rc.Receive()
+	if err!=nil {
+		panic(err)
+	}
+	fmt.Println("INCR",v)
+*/
+
 	type resdata struct {
 		admin models.Admin
 		currentTime time.Time
@@ -46,27 +66,27 @@ func SignIn(w http.ResponseWriter, r *http.Request ,_ httprouter.Params) {
 	
 	// POST Method admin signin auth
 	if r.Method == "POST" {
-            
+      
 			err := r.ParseForm()
-			
+
+			var isCap = false
 			for _, v := range CapList {
-				
-				P("captcha ===h>>>",v.Id)
+				if strings.ToUpper(r.PostFormValue("captcha")) == v.Id {
+					isCap = true   
+				}
 			}
 	
-		   // if IsInArray(strings.ToUpper(r.PostFormValue("captcha")),CapList) == false {
-			
-				P("captcha mismatch>>>",strings.ToUpper(r.PostFormValue("captcha")))
-			//	return
-				
-		//	}
+		  if isCap == false {			
+				 P("captcha mismatch>>>",strings.ToUpper(r.PostFormValue("captcha")))
+			  return
+	  	}
 
 			admin, err := models.UserByUsername(r.PostFormValue("username"))
 			if err != nil {
 				Danger(err, "Cannot find admin")
 			}
 
-			if admin.Password == models.Encrypt(r.PostFormValue("password")) {
+			if admin.Password == Encrypt(r.PostFormValue("password")) {
 				session, err := admin.CreateSession()
 				if err != nil {
 					Danger(err, "Cannot create session")

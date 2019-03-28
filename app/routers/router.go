@@ -4,12 +4,14 @@ import (
 	_"github.com/afocus/captcha"
 	"net/http"
 	. "admin-mvc/app/utils"
+	. "admin-mvc/app/utils/chain"
 	_"admin-mvc/app/models"	
 	"github.com/julienschmidt/httprouter"
 	"admin-mvc/app/controllers/user"
 	"admin-mvc/app/controllers/common"
 	"admin-mvc/app/controllers/admin"
 	"admin-mvc/app/controllers/thread"
+	"admin-mvc/app/controllers/rabittamqp"
 )
 
 
@@ -27,6 +29,10 @@ func New() http.Handler {
 	router.GET( "/captcha-query",GetCaptchaByQuery)
 	router.GET( "/qrcode",Qrcode)
 	
+	//rabbitmq 
+	router.GET( "/send",rabittamqp.SendMsg)
+	router.POST( "/send",rabittamqp.SendMsg)
+	router.GET( "/receiv",rabittamqp.Received)
 
 	//http.ListenAndServe(":8085", nil)
 
@@ -58,8 +64,6 @@ func New() http.Handler {
 	router.POST("/thread/create", thread.CreateThread)
 	router.POST("/thread/post", thread.PostThread)
 	router.GET("/thread/read/:id", thread.ReadThread)
-
-	
 
 	return router
 }

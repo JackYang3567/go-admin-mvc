@@ -3,6 +3,7 @@ package thread
 import (
 	"fmt"
 	. "admin-mvc/app/utils"
+	. "admin-mvc/app/utils/chain"
 	"admin-mvc/app/models"	
 	"html/template"
 	"net/http"

@@ -49,7 +49,7 @@ func Authenticate(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 	if err != nil {
 		 Danger(err, "Cannot find user")
 	}
-	if user.Password == models.Encrypt(r.PostFormValue("password")) {
+	if user.Password == Encrypt(r.PostFormValue("password")) {
 		session, err := user.CreateSession()
 		if err != nil {
 			 Danger(err, "Cannot create session")

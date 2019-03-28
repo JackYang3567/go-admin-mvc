@@ -1,6 +1,8 @@
 package models
 
 import (
+	. "admin-mvc/app/utils"
+	. "admin-mvc/app/utils/dbconn"
 	"time"
 )
 
@@ -73,7 +75,7 @@ func (user *User) CreateThread(topic string) (conv Thread, err error) {
 	}
 	defer stmt.Close()
 	// use QueryRow to return a row and scan the returned id into the Session struct
-	err = stmt.QueryRow(createUUID(), topic, user.Id, time.Now()).Scan(&conv.Id, &conv.Uuid, &conv.Topic, &conv.UserId, &conv.CreatedAt)
+	err = stmt.QueryRow(CreateUUID(), topic, user.Id, time.Now()).Scan(&conv.Id, &conv.Uuid, &conv.Topic, &conv.UserId, &conv.CreatedAt)
 	return
 }
 
@@ -86,7 +88,7 @@ func (user *User) CreatePost(conv Thread, body string) (post Post, err error) {
 	}
 	defer stmt.Close()
 	// use QueryRow to return a row and scan the returned id into the Session struct
-	err = stmt.QueryRow(createUUID(), body, user.Id, conv.Id, time.Now()).Scan(&post.Id, &post.Uuid, &post.Body, &post.UserId, &post.ThreadId, &post.CreatedAt)
+	err = stmt.QueryRow(CreateUUID(), body, user.Id, conv.Id, time.Now()).Scan(&post.Id, &post.Uuid, &post.Body, &post.UserId, &post.ThreadId, &post.CreatedAt)
 	return
 }
 

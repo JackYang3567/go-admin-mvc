@@ -1,6 +1,8 @@
 package models
 
 import (
+	. "admin-mvc/app/utils"
+	. "admin-mvc/app/utils/dbconn"
 	"fmt"
 	"time"
 )
@@ -32,7 +34,7 @@ func (user *User) CreateSession() (session Session, err error) {
 	}
 	defer stmt.Close()
 	// use QueryRow to return a row and scan the returned id into the Session struct
-	err = stmt.QueryRow(createUUID(), user.Email, user.Id, time.Now()).Scan(&session.Id, &session.Uuid, &session.Email, &session.UserId, &session.CreatedAt)
+	err = stmt.QueryRow(CreateUUID(), user.Email, user.Id, time.Now()).Scan(&session.Id, &session.Uuid, &session.Email, &session.UserId, &session.CreatedAt)
 	return
 }
 
@@ -102,7 +104,7 @@ func (user *User) Create() (err error) {
 	defer stmt.Close()
 
 	// use QueryRow to return a row and scan the returned id into the User struct
-	err = stmt.QueryRow(createUUID(), user.Name, user.Email, Encrypt(user.Password), time.Now()).Scan(&user.Id, &user.Uuid, &user.CreatedAt)
+	err = stmt.QueryRow(CreateUUID(), user.Name, user.Email, Encrypt(user.Password), time.Now()).Scan(&user.Id, &user.Uuid, &user.CreatedAt)
 	if err != nil {
 		fmt.Println(err)
 	}

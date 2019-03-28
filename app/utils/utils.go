@@ -2,9 +2,10 @@ package utils
 
 import (
 	"encoding/json"
-	"errors"
+	"crypto/rand"
+	"crypto/sha1"
 	"fmt"
-	"admin-mvc/app/models"	
+		
 	"html/template"
 	"log"
 	"net/http"
@@ -27,6 +28,8 @@ type Configuration struct {
 	Static       	 string
 	DbDriverName 	 string
 	DataSourceName   string
+	RedisProtocol    string
+	RedisHostPort    string
 }
 
 var Config Configuration
@@ -92,17 +95,6 @@ func Error_message(writer http.ResponseWriter, request *http.Request, msg string
 	http.Redirect(writer, request, strings.Join(url, ""), 302)
 }
 
-// Checks if the user is logged in and has a session, if not err is not nil
-func Session(writer http.ResponseWriter, request *http.Request) (sess models.Session, err error) {
-	cookie, err := request.Cookie("_cookie")
-	if err == nil {
-		sess = models.Session{Uuid: cookie.Value}
-		if ok, _ := sess.Check(); !ok {
-			err = errors.New("Invalid session")
-		}
-	}
-	return
-}
 
 
 // parse HTML templates
@@ -127,6 +119,30 @@ func GenerateHTML(writer http.ResponseWriter, data interface{}, filenames ...str
 
 	templates := template.Must(template.ParseFiles(files...))
 	templates.ExecuteTemplate(writer, "layout", data)
+}
+
+// create a random UUID with from RFC 4122
+// adapted from http://github.com/nu7hatch/gouuid
+func CreateUUID() (uuid string) {
+	u := new([16]byte)
+	_, err := rand.Read(u[:])
+	if err != nil {
+		log.Fatalln("Cannot generate UUID", err)
+	}
+
+	// 0x40 is reserved variant from RFC 4122
+	u[8] = (u[8] | 0x40) & 0x7F
+	// Set the four most significant bits (bits 12 through 15) of the
+	// time_hi_and_version field to the 4-bit version number.
+	u[6] = (u[6] & 0xF) | (0x4 << 4)
+	uuid = fmt.Sprintf("%x-%x-%x-%x-%x", u[0:4], u[4:6], u[6:8], u[8:10], u[10:])
+	return
+}
+
+// hash plaintext with SHA-1
+func Encrypt(plaintext string) (cryptext string) {
+	cryptext = fmt.Sprintf("%x", sha1.Sum([]byte(plaintext)))
+	return
 }
 
 // for logging
